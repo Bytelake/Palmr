@@ -1,7 +1,10 @@
 services:
   palmr:
-    build: .
-    image: palmr:local
+    # Published image (built by .github/workflows/publish-image.yml)
+    image: ghcr.io/bytelake/palmr:latest
+    # For local source builds instead of pulling:
+    # build: .
+    # image: palmr:local
     container_name: palmr
     environment:
       # ==============================================================================
