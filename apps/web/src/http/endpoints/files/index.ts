@@ -36,7 +36,7 @@ export const getFilePresignedUrl = <TData = GetPresignedUrlResult>(
   return apiInstance.get(`/api/files/presigned-url`, {
     ...options,
     params: { ...params, ...options?.params },
-  });
+  }) as Promise<TData>;
 };
 
 /**
@@ -47,7 +47,7 @@ export const checkFile = <TData = CheckFileResult>(
   CheckFileBody: CheckFileBody,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return apiInstance.post(`/api/files/check`, CheckFileBody, options);
+  return apiInstance.post(`/api/files/check`, CheckFileBody, options) as Promise<TData>;
 };
 
 /**
@@ -58,7 +58,7 @@ export const registerFile = <TData = RegisterFileResult>(
   registerFileBody: RegisterFileBody,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return apiInstance.post(`/api/files`, registerFileBody, options);
+  return apiInstance.post(`/api/files`, registerFileBody, options) as Promise<TData>;
 };
 
 /**
@@ -77,7 +77,7 @@ export const listFiles = <TData = ListFilesResult>(
   return apiInstance.get(`/api/files`, {
     ...options,
     params: { ...queryParams, ...options?.params },
-  });
+  }) as Promise<TData>;
 };
 
 /**
@@ -89,7 +89,7 @@ export const getDownloadUrl = <TData = GetDownloadUrlResult>(
   options?: AxiosRequestConfig
 ): Promise<TData> => {
   const encodedObjectName = encodeURIComponent(objectName);
-  return apiInstance.get(`/api/files/download-url?objectName=${encodedObjectName}`, options);
+  return apiInstance.get(`/api/files/download-url?objectName=${encodedObjectName}`, options) as Promise<TData>;
 };
 
 /**
@@ -97,7 +97,7 @@ export const getDownloadUrl = <TData = GetDownloadUrlResult>(
  * @summary Delete File
  */
 export const deleteFile = <TData = DeleteFileResult>(id: string, options?: AxiosRequestConfig): Promise<TData> => {
-  return apiInstance.delete(`/api/files/${id}`, options);
+  return apiInstance.delete(`/api/files/${id}`, options) as Promise<TData>;
 };
 
 /**
@@ -109,7 +109,7 @@ export const updateFile = <TData = UpdateFileResult>(
   updateFileBody: UpdateFileBody,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return apiInstance.patch(`/api/files/${id}`, updateFileBody, options);
+  return apiInstance.patch(`/api/files/${id}`, updateFileBody, options) as Promise<TData>;
 };
 
 /**
@@ -121,7 +121,7 @@ export const moveFile = <TData = MoveFileResult>(
   moveFileBody: MoveFileBody,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return apiInstance.put(`/api/files/${id}/move`, moveFileBody, options);
+  return apiInstance.put(`/api/files/${id}/move`, moveFileBody, options) as Promise<TData>;
 };
 
 /**
@@ -132,7 +132,7 @@ export const createMultipartUpload = <TData = CreateMultipartUploadResult>(
   createMultipartUploadBody: CreateMultipartUploadBody,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return apiInstance.post(`/api/files/multipart/create`, createMultipartUploadBody, options);
+  return apiInstance.post(`/api/files/multipart/create`, createMultipartUploadBody, options) as Promise<TData>;
 };
 
 /**
@@ -146,7 +146,7 @@ export const getMultipartPartUrl = <TData = GetMultipartPartUrlResult>(
   return apiInstance.get(`/api/files/multipart/part-url`, {
     ...options,
     params: { ...params, ...options?.params },
-  });
+  }) as Promise<TData>;
 };
 
 /**
@@ -157,7 +157,7 @@ export const completeMultipartUpload = <TData = CompleteMultipartUploadResult>(
   completeMultipartUploadBody: CompleteMultipartUploadBody,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return apiInstance.post(`/api/files/multipart/complete`, completeMultipartUploadBody, options);
+  return apiInstance.post(`/api/files/multipart/complete`, completeMultipartUploadBody, options) as Promise<TData>;
 };
 
 /**
@@ -168,5 +168,5 @@ export const abortMultipartUpload = <TData = AbortMultipartUploadResult>(
   abortMultipartUploadBody: AbortMultipartUploadBody,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return apiInstance.post(`/api/files/multipart/abort`, abortMultipartUploadBody, options);
+  return apiInstance.post(`/api/files/multipart/abort`, abortMultipartUploadBody, options) as Promise<TData>;
 };

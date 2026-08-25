@@ -5,7 +5,7 @@
  * Much simpler than filesystem routes - no chunk management, no streaming.
  */
 
-import { FastifyInstance } from "fastify";
+import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 
 import { S3StorageController } from "./controller";
@@ -13,10 +13,20 @@ import { S3StorageController } from "./controller";
 export async function s3StorageRoutes(app: FastifyInstance) {
   const controller = new S3StorageController();
 
+  const preValidation = async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+      await request.jwtVerify();
+    } catch (err) {
+      console.error(err);
+      reply.status(401).send({ error: "Invalid or missing token." });
+    }
+  };
+
   // Get presigned upload URL
   app.post(
     "/s3/upload-url",
     {
+      preValidation,
       schema: {
         tags: ["S3 Storage"],
         operationId: "getS3UploadUrl",
@@ -33,6 +43,8 @@ export async function s3StorageRoutes(app: FastifyInstance) {
             expiresIn: z.number(),
             message: z.string(),
           }),
+          401: z.object({ error: z.string() }),
+          403: z.object({ error: z.string() }),
         },
       },
     },
@@ -43,6 +55,7 @@ export async function s3StorageRoutes(app: FastifyInstance) {
   app.get(
     "/s3/download-url",
     {
+      preValidation,
       schema: {
         tags: ["S3 Storage"],
         operationId: "getS3DownloadUrl",
@@ -60,6 +73,8 @@ export async function s3StorageRoutes(app: FastifyInstance) {
             expiresIn: z.number(),
             message: z.string(),
           }),
+          401: z.object({ error: z.string() }),
+          403: z.object({ error: z.string() }),
         },
       },
     },
@@ -70,6 +85,7 @@ export async function s3StorageRoutes(app: FastifyInstance) {
   app.delete(
     "/s3/object/:objectName",
     {
+      preValidation,
       schema: {
         tags: ["S3 Storage"],
         operationId: "deleteS3Object",
@@ -82,6 +98,8 @@ export async function s3StorageRoutes(app: FastifyInstance) {
             message: z.string(),
             objectName: z.string(),
           }),
+          401: z.object({ error: z.string() }),
+          403: z.object({ error: z.string() }),
         },
       },
     },
@@ -92,6 +110,7 @@ export async function s3StorageRoutes(app: FastifyInstance) {
   app.get(
     "/s3/exists",
     {
+      preValidation,
       schema: {
         tags: ["S3 Storage"],
         operationId: "checkS3ObjectExists",
@@ -104,6 +123,8 @@ export async function s3StorageRoutes(app: FastifyInstance) {
             exists: z.boolean(),
             objectName: z.string(),
           }),
+          401: z.object({ error: z.string() }),
+          403: z.object({ error: z.string() }),
         },
       },
     },

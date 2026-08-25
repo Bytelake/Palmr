@@ -18,7 +18,7 @@ import type {
  * @summary Get application base information
  */
 export const getAppInfo = <TData = GetAppInfoResult>(options?: AxiosRequestConfig): Promise<TData> => {
-  return apiInstance.get(`/api/app/info`, options);
+  return apiInstance.get(`/api/app/info`, options) as Promise<TData>;
 };
 
 /**
@@ -26,7 +26,7 @@ export const getAppInfo = <TData = GetAppInfoResult>(options?: AxiosRequestConfi
  * @summary Get system information
  */
 export const getSystemInfo = <TData = GetSystemInfoResult>(options?: AxiosRequestConfig): Promise<TData> => {
-  return apiInstance.get(`/api/app/system-info`, options);
+  return apiInstance.get(`/api/app/system-info`, options) as Promise<TData>;
 };
 
 /**
@@ -49,7 +49,7 @@ export const uploadLogo = <TData = UploadLogoResult>(
       ...options?.headers,
       "Content-Type": "multipart/form-data",
     },
-  });
+  }) as Promise<TData>;
 };
 
 /**
@@ -57,7 +57,7 @@ export const uploadLogo = <TData = UploadLogoResult>(
  * @summary Remove app logo
  */
 export const removeLogo = <TData = RemoveLogoResult>(options?: AxiosRequestConfig): Promise<TData> => {
-  return apiInstance.delete(`/api/app/remove-logo`, options);
+  return apiInstance.delete(`/api/app/remove-logo`, options) as Promise<TData>;
 };
 
 /**
@@ -65,7 +65,7 @@ export const removeLogo = <TData = RemoveLogoResult>(options?: AxiosRequestConfi
  * @summary Check API Health
  */
 export const checkHealth = <TData = CheckHealthResult>(options?: AxiosRequestConfig): Promise<TData> => {
-  return apiInstance.get(`/api/app/health`, options);
+  return apiInstance.get(`/api/app/health`, options) as Promise<TData>;
 };
 
 /**
@@ -73,7 +73,7 @@ export const checkHealth = <TData = CheckHealthResult>(options?: AxiosRequestCon
  * @summary Get server disk space information
  */
 export const getDiskSpace = <TData = GetDiskSpaceResult>(options?: AxiosRequestConfig): Promise<TData> => {
-  return apiInstance.get(`/api/app/disk-space`, options);
+  return apiInstance.get(`/api/app/disk-space`, options) as Promise<TData>;
 };
 
 /**
@@ -87,7 +87,7 @@ export const checkUploadAllowed = <TData = CheckUploadAllowedResult>(
   return apiInstance.get(`/api/app/check-upload`, {
     ...options,
     params: { ...params, ...options?.params },
-  });
+  }) as Promise<TData>;
 };
 
 export type TestSmtpConnectionResult = { success: boolean; message: string };
@@ -109,5 +109,5 @@ export const testSmtpConnection = (
   body?: TestSmtpConnectionBody,
   options?: AxiosRequestConfig
 ): Promise<{ data: TestSmtpConnectionResult }> => {
-  return apiInstance.post(`/api/app/test-smtp`, body || {}, options);
+  return apiInstance.post(`/api/app/test-smtp`, body || {}, options) as Promise<{ data: TestSmtpConnectionResult }>;
 };

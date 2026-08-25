@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 /**
  * Extracts the real client IP from a NextRequest, considering various proxy headers
@@ -43,4 +43,15 @@ export function getClientHeaders(req: NextRequest): Record<string, string> {
     "X-Real-IP": clientIP,
     "X-User-Agent": userAgent,
   };
+}
+
+/**
+ * Forward Set-Cookie headers from an upstream API response without joining them.
+ * Joining with commas breaks cookies that contain commas (Expires, etc.).
+ */
+export function applySetCookieHeaders(res: NextResponse, apiRes: Response): void {
+  const cookies = apiRes.headers.getSetCookie?.() || [];
+  for (const cookie of cookies) {
+    res.headers.append("Set-Cookie", cookie);
+  }
 }

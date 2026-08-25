@@ -1,6 +1,7 @@
 services:
   palmr:
-    image: kyantech/palmr:latest
+    build: .
+    image: palmr:local
     container_name: palmr
     environment:
       # ==============================================================================
@@ -31,13 +32,22 @@ services:
       # ==============================================================================
       # - DEFAULT_LANGUAGE=en-US            # Default language (optional)
       # - PRESIGNED_URL_EXPIRATION=3600     # Presigned URL expiration in seconds (optional)
-      # - SECURE_SITE=true                  # Set true if using HTTPS reverse proxy (optional)
-      STORAGE_URL: "https://palmr-demo:9379" # REQUIRED for internal storage: Full storage URL with protocol (e.g., https://syrg.palmr.com or http://192.168.1.100:9379). Not needed when ENABLE_S3=true.
+      # - SECURE_SITE=true                  # REQUIRED when serving over HTTPS (sets Secure cookies)
+      # - CORS_ORIGIN=https://files.example.com  # Optional CORS allowlist (comma-separated)
+      # - APP_URL=https://files.example.com      # Public app URL used for OIDC redirect allowlisting
       #
+      # STORAGE_URL is required for internal storage: full URL clients use to reach MinIO
+      # (e.g. https://files.example.com:9379 or http://192.168.1.100:9379).
+      # Not needed when ENABLE_S3=true. Set this for your deployment — do not leave a demo value.
+      # STORAGE_URL: "https://your-host:9379"
+      #
+      # When reverse-proxying HTTPS to the web UI only, keep API/MinIO off the public internet
+      # and set STORAGE_URL to a hostname your reverse proxy routes to the storage port.
     ports:
-      - "9379:9379" # Internal storage (S3-compatible, REQUIRED for file uploads when using internal storage)
-      - "5487:5487" # Web interface
-      - "3333:3333" # API (optional, only if you need direct API access)
+      - "5487:5487" # Web interface (proxies API internally)
+      # Advanced: only publish these if you need direct access and understand the risk
+      # - "3333:3333" # API (bypasses Next.js proxy)
+      # - "9379:9379" # Internal MinIO (required for browser direct uploads when using internal storage)
     volumes:
       - palmr_data:/app/server
       # ==============================================================================

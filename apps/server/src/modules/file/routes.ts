@@ -139,7 +139,7 @@ export async function fileRoutes(app: FastifyInstance) {
         operationId: "embedFile",
         summary: "Embed File (Public Access)",
         description:
-          "Returns a media file (image/video/audio) for public embedding without authentication. Only works for media files.",
+          "Returns a media file (image/video/audio) for embedding. Requires owner auth or a passwordless public share.",
         params: z.object({
           id: z.string().min(1, "File ID is required").describe("The file ID"),
         }),

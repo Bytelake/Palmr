@@ -23,6 +23,23 @@ const envSchema = z.object({
   STORAGE_URL: z.string().optional(), // Storage URL for internal storage presigned URLs (required when ENABLE_S3=false, e.g., https://syrg.palmr.com or http://192.168.1.100:9379)
   DATABASE_URL: z.string().optional().default("file:/app/server/prisma/palmr.db"),
   CUSTOM_PATH: z.string().optional(),
+  // Comma-separated allowed CORS origins. Empty = reflect request origin only when single-origin Docker;
+  // set explicitly in production (e.g. https://files.example.com).
+  CORS_ORIGIN: z.string().optional().default(""),
+  // Public application URL used for OIDC redirect allowlisting (e.g. https://files.example.com)
+  APP_URL: z.string().optional().default(""),
 });
 
 export const env = envSchema.parse(process.env);
+
+/** Parse CORS_ORIGIN into an allowlist. Empty string means "reflect request origin" (dev/Docker default). */
+export function getCorsOrigins(): true | string[] {
+  const raw = env.CORS_ORIGIN?.trim();
+  if (!raw) {
+    return true;
+  }
+  return raw
+    .split(",")
+    .map((o) => o.trim())
+    .filter(Boolean);
+}

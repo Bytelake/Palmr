@@ -1,4 +1,8 @@
-## ⚠️ This project is being updated with the use of AI. It will be maintained to remain reasonably secure, but no new features are planned.
+## Maintenance fork (Bytelake)
+
+This is a **maintained fork** of the archived [kyantech/Palmr](https://github.com/kyantech/Palmr) project. Upstream development has stopped; this fork focuses on **security updates and keeping the app functional**. No major new features are planned.
+
+See [SECURITY.md](SECURITY.md) for reporting vulnerabilities and operator hardening notes.
 
 # 🌴 Palmr. - Open-Source File Transfer
 
@@ -15,12 +19,21 @@
     </h3>
     <p style="color: white; margin: 0; font-size: 14px; opacity: 0.95;">
       <strong>This project is currently in beta phase.</strong><br>
-      Not recommended for production environments.
+      Not recommended for production environments without additional hardening.
     </p>
   </div>
 </div>
 
-🔗 **For detailed documentation visit:** [Palmr. - Documentation](https://palmr.kyantech.com.br)
+🔗 **Upstream docs (may be outdated):** [Palmr. - Documentation](https://palmr.kyantech.com.br)
+
+### Quick start (Docker)
+
+```bash
+# Build and run locally (preferred — do not rely on the archived kyantech image)
+docker compose up --build -d
+```
+
+Then open `http://localhost:5487`. Set `STORAGE_URL` for your host when using internal storage, and set `SECURE_SITE=true` behind HTTPS. See comments in [`docker-compose.yaml`](docker-compose.yaml).
 
 ## 📌 Why Choose Palmr.?
 
