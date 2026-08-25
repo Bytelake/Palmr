@@ -4,7 +4,8 @@
 
 set -e
 
-MINIO_VERSION="RELEASE.2024-10-13T13-34-11Z"
+# Last community MinIO security release (OSS MinIO archived Apr 2026)
+MINIO_VERSION="RELEASE.2025-10-15T17-29-55Z"
 ARCH=$(uname -m)
 
 echo "[BUILD] Downloading storage system ${MINIO_VERSION} for ${ARCH}..."

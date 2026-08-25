@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { applySetCookieHeaders } from "@/lib/proxy-utils";
+
 export const maxDuration = 300; // 5 minutes for avatar uploads
 export const dynamic = "force-dynamic";
 
@@ -26,10 +28,7 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  const setCookie = apiRes.headers.getSetCookie?.() || [];
-  if (setCookie.length > 0) {
-    res.headers.set("Set-Cookie", setCookie.join(","));
-  }
+  applySetCookieHeaders(res, apiRes);
 
   return res;
 }

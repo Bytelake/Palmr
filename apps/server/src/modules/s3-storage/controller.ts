@@ -13,10 +13,15 @@
 
 import { FastifyReply, FastifyRequest } from "fastify";
 
+import { assertObjectNameAccess } from "../../utils/object-name-access";
 import { S3StorageProvider } from "../../providers/s3-storage.provider";
 
 export class S3StorageController {
   private storageProvider = new S3StorageProvider();
+
+  private getUserId(request: FastifyRequest): string | undefined {
+    return (request as any).user?.userId;
+  }
 
   /**
    * Generate presigned upload URL
@@ -28,6 +33,11 @@ export class S3StorageController {
 
       if (!objectName) {
         return reply.status(400).send({ error: "objectName is required" });
+      }
+
+      const access = assertObjectNameAccess(objectName, this.getUserId(request), { requireOwnerPrefix: true });
+      if (!access.ok) {
+        return reply.status(access.status).send({ error: access.error });
       }
 
       const expiresIn = expires || 3600; // 1 hour default
@@ -72,6 +82,11 @@ export class S3StorageController {
 
       if (!objectName) {
         return reply.status(400).send({ error: "objectName is required" });
+      }
+
+      const access = assertObjectNameAccess(objectName, this.getUserId(request), { requireOwnerPrefix: true });
+      if (!access.ok) {
+        return reply.status(access.status).send({ error: access.error });
       }
 
       // Check if file exists
@@ -137,6 +152,11 @@ export class S3StorageController {
         return reply.status(400).send({ error: "objectName is required" });
       }
 
+      const access = assertObjectNameAccess(objectName, this.getUserId(request), { requireOwnerPrefix: true });
+      if (!access.ok) {
+        return reply.status(access.status).send({ error: access.error });
+      }
+
       await this.storageProvider.deleteObject(objectName);
 
       return reply.status(200).send({
@@ -158,6 +178,11 @@ export class S3StorageController {
 
       if (!objectName) {
         return reply.status(400).send({ error: "objectName is required" });
+      }
+
+      const access = assertObjectNameAccess(objectName, this.getUserId(request), { requireOwnerPrefix: true });
+      if (!access.ok) {
+        return reply.status(access.status).send({ error: access.error });
       }
 
       const exists = await this.storageProvider.fileExists(objectName);

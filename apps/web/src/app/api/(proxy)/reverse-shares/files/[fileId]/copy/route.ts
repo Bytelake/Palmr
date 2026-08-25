@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { applySetCookieHeaders } from "@/lib/proxy-utils";
+
 export const maxDuration = 600000; // 10 minutes timeout for large file copies
 export const dynamic = "force-dynamic";
 
@@ -45,10 +47,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ fil
       },
     });
 
-    const setCookie = apiRes.headers.getSetCookie?.() || [];
-    if (setCookie.length > 0) {
-      res.headers.set("Set-Cookie", setCookie.join(","));
-    }
+    applySetCookieHeaders(res, apiRes);
 
     return res;
   } catch (error: any) {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getClientHeaders } from "@/lib/proxy-utils";
+import { applySetCookieHeaders, getClientHeaders } from "@/lib/proxy-utils";
 
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3333";
 
@@ -31,10 +31,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const setCookie = apiRes.headers.getSetCookie?.() || [];
-    if (setCookie.length > 0) {
-      res.headers.set("Set-Cookie", setCookie.join(","));
-    }
+    applySetCookieHeaders(res, apiRes);
 
     return res;
   } catch (error) {

@@ -1,6 +1,7 @@
 import crypto from "crypto";
 
 import { prisma } from "../../shared/prisma";
+import { env } from "../../env";
 import {
   detectProviderType,
   DISCOVERY_PATHS,
@@ -44,6 +45,51 @@ export class AuthProvidersService {
 
   private buildBaseUrl(requestContext?: RequestContextService): string {
     return requestContext ? `${requestContext.protocol}://${requestContext.host}` : DEFAULT_BASE_URL;
+  }
+
+  /**
+   * Allow only relative paths or absolute URLs on the same origin as APP_URL / request host.
+   * Blocks open redirects to attacker-controlled hosts.
+   */
+  private sanitizeRedirectUrl(redirectUrl: string | undefined, requestContext?: RequestContextService): string {
+    const fallback = "/dashboard";
+    if (!redirectUrl || !redirectUrl.trim()) {
+      return fallback;
+    }
+
+    const trimmed = redirectUrl.trim();
+
+    // Relative path (same-origin)
+    if (trimmed.startsWith("/") && !trimmed.startsWith("//")) {
+      return trimmed;
+    }
+
+    try {
+      const candidate = new URL(trimmed);
+      const allowedOrigins = new Set<string>();
+
+      if (env.APP_URL) {
+        try {
+          allowedOrigins.add(new URL(env.APP_URL).origin);
+        } catch {
+          // ignore invalid APP_URL
+        }
+      }
+
+      if (requestContext) {
+        allowedOrigins.add(`${requestContext.protocol}://${requestContext.host}`);
+      }
+
+      allowedOrigins.add(new URL(DEFAULT_BASE_URL).origin);
+
+      if (allowedOrigins.has(candidate.origin)) {
+        return `${candidate.pathname}${candidate.search}${candidate.hash}`;
+      }
+    } catch {
+      // invalid URL
+    }
+
+    return fallback;
   }
 
   private generateState(): string {
@@ -394,14 +440,15 @@ export class AuthProvidersService {
 
     const finalState = state || this.generateState();
     const baseUrl = this.buildBaseUrl(requestContext);
-    const callbackUrl = redirectUri || `${baseUrl}/api/auth/providers/${providerName}/callback`;
+    // Always use this app's callback URL for the OAuth redirect_uri — never client-supplied.
+    const callbackUrl = `${baseUrl}/api/auth/providers/${providerName}/callback`;
 
     const { codeVerifier, codeChallenge } = this.setupPkceIfNeeded(validatedProvider);
 
     const pendingState = this.createPendingState(
       validatedProvider.id,
       codeVerifier || "",
-      redirectUri || `${baseUrl}/dashboard`
+      this.sanitizeRedirectUrl(redirectUri, requestContext)
     );
     this.pendingStates.set(finalState, pendingState);
 

@@ -9,6 +9,7 @@ import { serializerCompiler, validatorCompiler, ZodTypeProvider } from "fastify-
 
 import { registerSwagger } from "./config/swagger.config";
 import { envTimeoutOverrides } from "./config/timeout.config";
+import { getCorsOrigins } from "./env";
 import { prisma } from "./shared/prisma";
 
 export async function buildApp() {
@@ -68,8 +69,9 @@ export async function buildApp() {
     format: "date-time",
   });
 
+  const corsOrigins = getCorsOrigins();
   app.register(fastifyCors, {
-    origin: true,
+    origin: corsOrigins,
     credentials: true,
   });
 

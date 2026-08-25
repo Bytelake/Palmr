@@ -1,5 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 
+import { env } from "../../env";
 import { ConfigService } from "../config/service";
 import { UpdateAuthProviderSchema } from "./dto";
 import { AuthProvidersService } from "./service";
@@ -121,10 +122,11 @@ export class AuthProvidersController {
   }
 
   private setAuthCookie(reply: FastifyReply, token: string, isSecure: boolean) {
+    const secure = env.SECURE_SITE === "true" || isSecure;
     reply.setCookie("token", token, {
       httpOnly: true,
-      secure: isSecure,
-      sameSite: "lax",
+      secure,
+      sameSite: secure ? "lax" : "strict",
       maxAge: COOKIE_MAX_AGE,
       path: "/",
     });
@@ -382,7 +384,9 @@ export class AuthProvidersController {
       this.setAuthCookie(reply, jwt, request.protocol === "https");
 
       const redirectUrl = result.redirectUrl || "/dashboard";
-      const fullRedirectUrl = redirectUrl.startsWith("http") ? redirectUrl : `${baseUrl}${redirectUrl}`;
+      // sanitizeRedirectUrl already ran when storing pending state; re-check absolute URLs.
+      const safePath = redirectUrl.startsWith("/") ? redirectUrl : "/dashboard";
+      const fullRedirectUrl = `${baseUrl}${safePath}`;
 
       return reply.redirect(fullRedirectUrl);
     } catch (error) {

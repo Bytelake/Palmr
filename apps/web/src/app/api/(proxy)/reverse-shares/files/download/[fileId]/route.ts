@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { applySetCookieHeaders } from "@/lib/proxy-utils";
+
 import { detectMimeTypeWithFallback } from "@/utils/mime-types";
 
 const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3333";
@@ -45,10 +47,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ file
     },
   });
 
-  const setCookie = apiRes.headers.getSetCookie?.() || [];
-  if (setCookie.length > 0) {
-    res.headers.set("Set-Cookie", setCookie.join(","));
-  }
+  applySetCookieHeaders(res, apiRes);
 
   return res;
 }

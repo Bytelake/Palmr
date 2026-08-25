@@ -106,8 +106,11 @@ if [ ! -f "$MINIO_CREDENTIALS" ]; then
     exit 1
 fi
 
-chmod 644 "$MINIO_CREDENTIALS" 2>/dev/null || true
-echo "[STORAGE-SYSTEM-SETUP] ✓ Credentials file created and readable"
+chmod 600 "$MINIO_CREDENTIALS" 2>/dev/null || true
+if [ "$(id -u)" = "0" ]; then
+    chown $TARGET_UID:$TARGET_GID "$MINIO_CREDENTIALS" 2>/dev/null || true
+fi
+echo "[STORAGE-SYSTEM-SETUP] ✓ Credentials file created (mode 600)"
 
 echo "[STORAGE-SYSTEM-SETUP] ✓✓✓ Storage system configured successfully!"
 echo "[STORAGE-SYSTEM-SETUP]   Bucket: $MINIO_BUCKET"

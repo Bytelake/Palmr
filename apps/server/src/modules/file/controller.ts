@@ -9,6 +9,7 @@ import {
   parseFileName,
 } from "../../utils/file-name-generator";
 import { getContentType } from "../../utils/mime-types";
+import { assertObjectNameAccess } from "../../utils/object-name-access";
 import { ConfigService } from "../config/service";
 import {
   CheckFileInput,
@@ -64,6 +65,11 @@ export class FileController {
       }
 
       const input: RegisterFileInput = RegisterFileSchema.parse(request.body);
+
+      const objectAccess = assertObjectNameAccess(input.objectName, userId, { requireOwnerPrefix: true });
+      if (!objectAccess.ok) {
+        return reply.status(objectAccess.status).send({ error: objectAccess.error });
+      }
 
       const maxFileSize = BigInt(await this.configService.getValue("maxFileSize"));
       if (BigInt(input.size) > maxFileSize) {
@@ -607,6 +613,33 @@ export class FileController {
         });
       }
 
+      // Require: owner (JWT) OR membership in a passwordless public share
+      let hasAccess = false;
+
+      try {
+        await request.jwtVerify();
+        const userId = (request as any).user?.userId;
+        if (userId && fileRecord.userId === userId) {
+          hasAccess = true;
+        }
+      } catch {
+        // unauthenticated embed only via public share below
+      }
+
+      if (!hasAccess) {
+        const shares = await prisma.share.findMany({
+          where: {
+            files: { some: { id: fileRecord.id } },
+          },
+          include: { security: true },
+        });
+        hasAccess = shares.some((share) => !share.security.password);
+      }
+
+      if (!hasAccess) {
+        return reply.status(401).send({ error: "Unauthorized access to file." });
+      }
+
       // Stream from S3/MinIO
       const stream = await this.fileService.getObjectStream(fileRecord.objectName);
       const contentType = getContentType(fileRecord.name);
@@ -615,7 +648,7 @@ export class FileController {
       reply.header("Content-Type", contentType);
       reply.header("Content-Disposition", `inline; filename="${encodeURIComponent(fileName)}"`);
       reply.header("Content-Length", fileRecord.size.toString());
-      reply.header("Cache-Control", "public, max-age=31536000"); // Cache por 1 ano
+      reply.header("Cache-Control", "public, max-age=31536000");
 
       return reply.send(stream);
     } catch (error) {
@@ -696,6 +729,11 @@ export class FileController {
         return reply.status(400).send({ error: "uploadId, objectName, and partNumber are required" });
       }
 
+      const objectAccess = assertObjectNameAccess(objectName, userId, { requireOwnerPrefix: true });
+      if (!objectAccess.ok) {
+        return reply.status(objectAccess.status).send({ error: objectAccess.error });
+      }
+
       const partNum = parseInt(partNumber);
       if (isNaN(partNum) || partNum < 1 || partNum > 10000) {
         return reply.status(400).send({ error: "partNumber must be between 1 and 10000" });
@@ -729,6 +767,11 @@ export class FileController {
         return reply.status(400).send({ error: "uploadId, objectName, and parts are required" });
       }
 
+      const objectAccess = assertObjectNameAccess(objectName, userId, { requireOwnerPrefix: true });
+      if (!objectAccess.ok) {
+        return reply.status(objectAccess.status).send({ error: objectAccess.error });
+      }
+
       await this.fileService.completeMultipartUpload(objectName, uploadId, parts);
 
       return reply.status(200).send({
@@ -755,6 +798,11 @@ export class FileController {
 
       if (!uploadId || !objectName) {
         return reply.status(400).send({ error: "uploadId and objectName are required" });
+      }
+
+      const objectAccess = assertObjectNameAccess(objectName, userId, { requireOwnerPrefix: true });
+      if (!objectAccess.ok) {
+        return reply.status(objectAccess.status).send({ error: objectAccess.error });
       }
 
       await this.fileService.abortMultipartUpload(objectName, uploadId);

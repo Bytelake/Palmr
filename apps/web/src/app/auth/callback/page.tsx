@@ -8,6 +8,13 @@ import { toast } from "sonner";
 import { useAuth } from "@/contexts/auth-context";
 import { getCurrentUser } from "@/http/endpoints";
 
+/**
+ * OIDC/login callback landing page.
+ *
+ * Auth cookies are set httpOnly by the API (via the Next.js proxy).
+ * Tokens in the query string are intentionally ignored — never write JWTs
+ * into document.cookie (XSS-readable).
+ */
 export default function AuthCallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -15,7 +22,6 @@ export default function AuthCallbackPage() {
   const t = useTranslations();
 
   useEffect(() => {
-    const token = searchParams.get("token");
     const error = searchParams.get("error");
 
     if (error) {
@@ -49,35 +55,27 @@ export default function AuthCallbackPage() {
       return;
     }
 
-    if (token) {
-      document.cookie = `token=${token}; path=/; max-age=${7 * 24 * 60 * 60}; samesite=lax`;
-
-      // Buscar dados do usuário após definir o cookie
-      const fetchUserData = async () => {
-        try {
-          const response = await getCurrentUser();
-          if (response?.data?.user) {
-            const { isAdmin, ...userData } = response.data.user;
-            setUser(userData);
-            setIsAdmin(isAdmin);
-            setIsAuthenticated(true);
-            toast.success(t("auth.successfullyAuthenticated"));
-            router.push("/dashboard");
-          } else {
-            throw new Error("No user data received");
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-          toast.error(t("auth.authenticationFailed"));
-          router.push("/login");
+    const fetchUserData = async () => {
+      try {
+        const response = await getCurrentUser();
+        if (response?.data?.user) {
+          const { isAdmin, ...userData } = response.data.user;
+          setUser(userData);
+          setIsAdmin(isAdmin);
+          setIsAuthenticated(true);
+          toast.success(t("auth.successfullyAuthenticated"));
+          router.push("/dashboard");
+        } else {
+          throw new Error("No user data received");
         }
-      };
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+        toast.error(t("auth.authenticationFailed"));
+        router.push("/login");
+      }
+    };
 
-      fetchUserData();
-      return;
-    }
-
-    router.push("/login");
+    fetchUserData();
   }, [router, searchParams, setUser, setIsAuthenticated, setIsAdmin, t]);
 
   return (
