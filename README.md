@@ -1,10 +1,3 @@
-
-> ## ⚠️ Project Archived
-> After deep reflection, I have decided to focus my limited time and energy on my other projects. As a solo developer, I have struggled to actively maintain multiple projects with the care and attention they deserve. Without enough sponsors, it became unfeasible to maintain Palmr.
-> If you are interested in continuing this work through a fork, I will be happy to add a link to it here in the README.
-> We thank all the contributors and users who have supported Palmr over time!
-
-
 # 🌴 Palmr. - Open-Source File Transfer
 
 <p align="center">
@@ -131,29 +124,6 @@
     </td>
   </tr>
 </table>
-
-
-## 👨‍💻 Core Maintainers
-
-| [**Daniel Luiz Alves**](https://github.com/danielalves96) |
-|------------------|
-| <img src="https://github.com/danielalves96.png" width="150px" alt="Daniel Luiz Alves" /> |
-
-</br>
-
-## 🤝 Supporters
-
-[<img src="https://i.ibb.co/nMN40STL/Repoflow.png" width="200px" alt="Daniel Luiz Alves" />](https://www.repoflow.io/)
-
-## ⭐ Star History
-
-  <a href="https://www.star-history.com/#kyantech/Palmr&Date">
-   <picture>
-     <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=kyantech/Palmr&type=Date&theme=dark" />
-     <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=kyantech/Palmr&type=Date" />
-     <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=kyantech/Palmr&type=Date" />
-   </picture>
-  </a>
 
 ## 🛠️ Contributing
 
