@@ -1,4 +1,4 @@
-##⚠️ This project is being updated with the use of AI. It will be maintained to remain reasonably secure, but no new features are planned.
+## ⚠️ This project is being updated with the use of AI. It will be maintained to remain reasonably secure, but no new features are planned.
 
 # 🌴 Palmr. - Open-Source File Transfer
 
