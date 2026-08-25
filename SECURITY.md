@@ -40,3 +40,4 @@ The following are known limitations carried from upstream and are documented rat
 - Multipart and Server Action body size limits are extremely large by design for large file transfers.
 - Filesystem encryption remains disabled by default (`DISABLE_FILESYSTEM_ENCRYPTION=true`); rely on disk encryption / S3 provider controls.
 - OIDC PKCE/state is stored in an in-memory map (not suitable for multi-instance without sticky sessions or shared state).
+- Some transitive npm advisories (often via Next.js / Uppy tooling) may remain at low/moderate severity; Dependabot + `pnpm audit` in CI track them. High/critical findings in direct production dependencies should be cleared before release.
