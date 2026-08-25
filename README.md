@@ -28,13 +28,26 @@ See [SECURITY.md](SECURITY.md) for reporting vulnerabilities and operator harden
 
 ### Quick start (Docker)
 
+Pull the published image from GitHub Container Registry (built on every `main` push):
+
 ```bash
-# Build and run locally (preferred — do not rely on the archived kyantech image)
-docker compose up --build -d
+docker pull ghcr.io/bytelake/palmr:latest
+docker compose up -d
 ```
+
+Image: [`ghcr.io/bytelake/palmr`](https://github.com/Bytelake/Palmr/pkgs/container/palmr)
+
+If the package is private the first time, make it public under **GitHub → Packages → palmr → Package settings → Change visibility**, or log in with a token that can read packages:
+
+```bash
+echo $GITHUB_TOKEN | docker login ghcr.io -u YOUR_GITHUB_USERNAME --password-stdin
+```
+
+To build from source instead of pulling, uncomment `build: .` in [`docker-compose.yaml`](docker-compose.yaml) and run `docker compose up --build -d`.
 
 Then open `http://localhost:5487`. Set `STORAGE_URL` for your host when using internal storage, and set `SECURE_SITE=true` behind HTTPS. See comments in [`docker-compose.yaml`](docker-compose.yaml).
 
+Version tags (`v*`) also publish: `docker pull ghcr.io/bytelake/palmr:v3.3.3-beta`.
 ## 📌 Why Choose Palmr.?
 
 - **Self-hosted** – Deploy on your own server or VPS.
