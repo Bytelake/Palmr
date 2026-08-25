@@ -116,10 +116,13 @@ COPY --from=server-builder --chown=palmr:nodejs /app/server/prisma/seed.js /app/
 # === Copy Web Files ===
 WORKDIR /app/web
 
-# Copy web production files
+# Copy web production files.
+# Standalone layout must place server.js at /app/web/server.js (see next.config.ts
+# outputFileTracingRoot). Fail the image build if the entrypoint is missing.
 COPY --from=web-builder --chown=palmr:nodejs /app/web/public ./public
 COPY --from=web-builder --chown=palmr:nodejs /app/web/.next/standalone ./
 COPY --from=web-builder --chown=palmr:nodejs /app/web/.next/static ./.next/static
+RUN test -f /app/web/server.js || (echo "ERROR: /app/web/server.js missing from Next.js standalone output" && find /app/web -name 'server.js' -o -name 'server.mjs' 2>/dev/null; ls -la /app/web; exit 1)
 
 # === Setup Supervisor ===
 WORKDIR /app
