@@ -56,11 +56,9 @@ services:
       # ==============================================================================
       # ADVANCED: Use a different disk for file storage (for larger capacity)
       # ==============================================================================
-      # Uncomment the line below to store files on a different disk:
-      # - /path/to/your/large/disk:/app/server/data
-      #
-      # Example: Mount a 2TB drive for files while keeping database on fast SSD
-      # - /mnt/storage/palmr-files:/app/server/data
+      # Bind-mount the FULL /app/server path (DB + MinIO data + uploads), not a
+      # nested /app/server/data directory — that path is unused by Palmr:
+      # - /mnt/storage/palmr:/app/server
       #
     restart: unless-stopped
 
