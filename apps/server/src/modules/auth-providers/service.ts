@@ -1,7 +1,7 @@
 import crypto from "crypto";
 
-import { prisma } from "../../shared/prisma";
 import { env } from "../../env";
+import { prisma } from "../../shared/prisma";
 import {
   detectProviderType,
   DISCOVERY_PATHS,

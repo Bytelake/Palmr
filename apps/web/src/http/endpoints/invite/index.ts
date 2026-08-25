@@ -27,5 +27,5 @@ export const registerWithInvite = <TData = RegisterWithInviteResponse>(
   data: RegisterWithInviteRequest,
   options?: AxiosRequestConfig
 ): Promise<TData> => {
-  return apiInstance.post(`/api/register-with-invite`, data, options);
+  return apiInstance.post(`/api/register-with-invite`, data, options) as Promise<TData>;
 };

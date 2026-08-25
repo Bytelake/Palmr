@@ -13,8 +13,8 @@
 
 import { FastifyReply, FastifyRequest } from "fastify";
 
-import { assertObjectNameAccess } from "../../utils/object-name-access";
 import { S3StorageProvider } from "../../providers/s3-storage.provider";
+import { assertObjectNameAccess } from "../../utils/object-name-access";
 
 export class S3StorageController {
   private storageProvider = new S3StorageProvider();

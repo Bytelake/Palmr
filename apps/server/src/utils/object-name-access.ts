@@ -5,9 +5,7 @@
  * Reverse-share uploads use `reverse-shares/...` and are authorized separately.
  */
 
-export type ObjectNameAccessResult =
-  | { ok: true }
-  | { ok: false; status: 401 | 403; error: string };
+export type ObjectNameAccessResult = { ok: true } | { ok: false; status: 401 | 403; error: string };
 
 export function assertObjectNameAccess(
   objectName: string,
