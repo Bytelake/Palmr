@@ -1,6 +1,6 @@
 ## Maintenance fork (Bytelake)
 
-This is a **maintained fork** of the archived [kyantech/Palmr](https://github.com/kyantech/Palmr) project. Upstream development has stopped; this fork focuses on **security updates and keeping the app functional**. No major new features are planned.
+This is an AI maintained fork of the archived [kyantech/Palmr](https://github.com/kyantech/Palmr) project. It focuses on security updates and keeping the app functional. No major new features are planned. It is in no way guaranteed to be fully functioning without issues, or secure, so use at your own risk.
 
 See [SECURITY.md](SECURITY.md) for reporting vulnerabilities and operator hardening notes.
 
